@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import authConfig from './config/auth.config';
@@ -10,9 +11,22 @@ import { validationSchema } from './config/validationSchema';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`${__dirname}/config/.env`],
       load: [typeormConfig, authConfig],
       validationSchema,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [typeormConfig.KEY],
+      useFactory: (config: ConfigType<typeof typeormConfig>) => ({
+        type: 'mysql',
+        host: config.host,
+        port: +config.port,
+        username: config.username,
+        password: config.password,
+        database: config.database,
+        synchronize: true,
+        autoLoadEntities: true,
+      }),
     }),
   ],
   controllers: [AppController],
