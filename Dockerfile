@@ -7,7 +7,7 @@ RUN yarn install
 RUN yarn global add @nestjs/cli
 
 COPY . .
-RUN yarn build
+RUN yarn --prod
 
 FROM node:16.16.0-alpine
 
