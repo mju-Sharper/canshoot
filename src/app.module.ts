@@ -8,28 +8,32 @@ import authConfig from './config/auth.config';
 import typeormConfig from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
 
+const businessModules = [];
+
+const libModules = [
+  ConfigModule.forRoot({
+    isGlobal: true,
+    load: [typeormConfig, authConfig],
+    validationSchema,
+  }),
+  TypeOrmModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [typeormConfig.KEY],
+    useFactory: (config: ConfigType<typeof typeormConfig>) => ({
+      type: 'mysql',
+      host: config.host,
+      port: +config.port,
+      username: config.username,
+      password: config.password,
+      database: config.database,
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
+  }),
+];
+
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [typeormConfig, authConfig],
-      validationSchema,
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [typeormConfig.KEY],
-      useFactory: (config: ConfigType<typeof typeormConfig>) => ({
-        type: 'mysql',
-        host: config.host,
-        port: +config.port,
-        username: config.username,
-        password: config.password,
-        database: config.database,
-        synchronize: true,
-        autoLoadEntities: true,
-      }),
-    }),
-  ],
+  imports: [...businessModules, ...libModules],
   controllers: [AppController],
   providers: [AppService],
 })
