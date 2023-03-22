@@ -5,8 +5,7 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -23,7 +22,3 @@ services:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_HOST=${DB_HOST}
       - TZ=Asia/Seoul
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      timeout: 20s
-      retries: 10
