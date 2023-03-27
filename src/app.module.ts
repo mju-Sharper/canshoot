@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { typeORMConfig } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
 
@@ -18,7 +19,7 @@ const libModules = [
 ];
 
 @Module({
-  imports: [...businessModules, ...libModules],
+  imports: [...businessModules, ...libModules, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
