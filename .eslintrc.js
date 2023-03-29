@@ -62,5 +62,7 @@ module.exports = {
       { enforceForRenamedProperties: true },
     ],
     camelcase: 'error',
+    indent: 'off',
+    'object-curly-newline': 'off',
   },
 };
