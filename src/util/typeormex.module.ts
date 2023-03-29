@@ -34,25 +34,6 @@ export class TypeOrmExModule {
         },
       });
     });
-    // for (const repository of repositories) {
-    //   const entity = Reflect.getMetadata(
-    //     TYPEORM_EX_CUSTOM_REPOSITORY,
-    //     repository,
-    //   );
-
-    //   providers.push({
-    //     inject: [getDataSourceToken()],
-    //     provide: repository,
-    //     useFactory: (dataSource: DataSource): typeof repository => {
-    //       const baseRepository = dataSource.getRepository<any>(entity);
-    //       return new repository(
-    //         baseRepository.target,
-    //         baseRepository.manager,
-    //         baseRepository.queryRunner,
-    //       );
-    //     },
-    //   });
-    // }
 
     return {
       exports: providers,
