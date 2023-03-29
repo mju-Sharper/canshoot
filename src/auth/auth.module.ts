@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.startegy';
 import { User } from './user.entity';
+import { UserRepository } from './user.repository';
 
 const businessModules = [];
 
@@ -25,7 +26,7 @@ const libModules = [
 
 @Module({
   imports: [...businessModules, ...libModules],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, UserRepository],
   controllers: [AuthController],
   exports: [AuthService, JwtStrategy],
 })
