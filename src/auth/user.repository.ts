@@ -1,26 +1,21 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException, HttpException } from '@nestjs/common';
 
 import * as bcrypt from 'bcrypt';
+import { CustomRepository } from 'src/util/repository.decorator';
 import { Repository } from 'typeorm';
 
 import { SignUpDto } from './dto/signUp.dto';
 import { User } from './user.entity';
 
-@Injectable()
-export class UserRepository {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
-
+@CustomRepository(User)
+export class UserRepository extends Repository<User> {
   async createUser(signUpDto: SignUpDto) {
     const { id, name, password, phone, email } = signUpDto;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.userRepository.create({
+    const user = this.create({
       phone,
       name,
       id,
@@ -29,7 +24,7 @@ export class UserRepository {
     });
 
     try {
-      await this.userRepository.save(user);
+      await this.save(user);
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
         throw new BadRequestException({
