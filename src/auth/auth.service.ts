@@ -22,9 +22,8 @@ export class AuthService {
 
   async signIn(signInDto: SignInDto): Promise<ResponseDto> {
     const { userId, password } = signInDto;
-    const user = await this.userRepository.findOneBy({
-      userId,
-    });
+    const user = await this.userRepository.findUserById(userId);
+
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { userId };
       const accessToken = this.jwtService.sign(payload, {
@@ -32,6 +31,7 @@ export class AuthService {
       });
       return new ResponseDto('로그인에 성공했습니다.', { accessToken });
     }
-    throw new BadRequestException('로그인에 실패했습니다.');
+
+    throw new BadRequestException('비밀번호가 일치하지 않습니다.');
   }
 }

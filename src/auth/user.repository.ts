@@ -27,9 +27,7 @@ export class UserRepository extends Repository<User> {
       await this.save(user);
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
-        throw new BadRequestException({
-          error: '이미 있는 아이디입니다.',
-        });
+        throw new BadRequestException('이미 존재하는 아이디입니다.');
       } else {
         throw new HttpException(
           {
@@ -39,7 +37,18 @@ export class UserRepository extends Repository<User> {
         );
       }
     }
-
     return 'signIn';
+  }
+
+  async findUserById(userId: string): Promise<User> {
+    const user = await this.findOneBy({
+      userId,
+    });
+
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 아이디입니다.');
+    }
+
+    return user;
   }
 }
