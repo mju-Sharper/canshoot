@@ -25,8 +25,15 @@ export class User extends BaseEntity {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({
+    select: false,
+  })
   password: string;
+
+  @Column({
+    default: 10000,
+  })
+  point = 10000;
 
   @CreateDateColumn()
   createdDate: Date;
