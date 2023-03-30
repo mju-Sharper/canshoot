@@ -10,7 +10,7 @@ import { User } from './user.entity';
 @CustomRepository(User)
 export class UserRepository extends Repository<User> {
   async createUser(signUpDto: SignUpDto) {
-    const { id, name, password, phone, email } = signUpDto;
+    const { userId, name, password, phone, email } = signUpDto;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -18,7 +18,7 @@ export class UserRepository extends Repository<User> {
     const user = this.create({
       phone,
       name,
-      id,
+      userId,
       password: hashedPassword,
       email,
     });

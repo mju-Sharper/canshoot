@@ -9,7 +9,7 @@ import {
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  userId: string;
+  id: string;
 
   @Column()
   name: string;
@@ -21,7 +21,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  id: string;
+  userId: string;
 
   @Column()
   password: string;

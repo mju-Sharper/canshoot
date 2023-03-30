@@ -22,12 +22,12 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const { id, password } = signInDto;
+    const { userId, password } = signInDto;
     const user = await this.userRepository.findOneBy({
-      id,
+      userId,
     });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id };
+      const payload = { userId };
       const accessToken = this.jwtService.sign(payload, {
         secret: process.env.JWT_ACCESSTOKEN_SECRET,
       });

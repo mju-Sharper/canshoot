@@ -11,7 +11,7 @@ export class SignUpDto {
   email: string;
 
   @IsString()
-  id: string;
+  userId: string;
 
   @IsString()
   password: string;
