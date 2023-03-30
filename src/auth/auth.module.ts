@@ -12,27 +12,23 @@ import { JwtStrategy } from './jwt.startegy';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
-const businessModules = [];
-
-const libModules = [
-  JwtModule.registerAsync({
-    inject: [ConfigService],
-    useFactory: (config: ConfigService) => ({
-      secret: config.get<string>('JWT_ACCESSTOKEN_SECRET'),
-      signOptions: {
-        expiresIn: 3600,
-      },
-    }),
-  }),
-  PassportModule.register({
-    defaultStrategy: 'jwt',
-  }),
-  TypeOrmModule.forFeature([User]),
-  TypeOrmExModule.forCustomRepository([UserRepository]),
-];
-
 @Module({
-  imports: [...businessModules, ...libModules],
+  imports: [
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_ACCESSTOKEN_SECRET'),
+        signOptions: {
+          expiresIn: 3600,
+        },
+      }),
+    }),
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
+    TypeOrmModule.forFeature([User]),
+    TypeOrmExModule.forCustomRepository([UserRepository]),
+  ],
   providers: [AuthService, JwtStrategy, JwtService],
   controllers: [AuthController],
   exports: [
