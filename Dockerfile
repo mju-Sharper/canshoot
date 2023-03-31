@@ -3,7 +3,7 @@ FROM node:16.16.0-alpine AS INSTALLER
 WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn build .
 RUN yarn global add @nestjs/cli
 
 COPY . .
