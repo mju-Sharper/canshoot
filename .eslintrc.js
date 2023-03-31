@@ -10,6 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'airbnb-base',
+    'prettier',
   ],
   root: true,
   env: {
@@ -56,22 +57,11 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error'],
     'no-empty-function': 'off',
     'class-methods-use-this': 'off',
-    indent: 'off',
-    'object-curly-newline': 'off',
-    'space-before-function-paren': 'off',
-    'comma-dangle': 'off',
-    'function-paren-newline': 'off',
     'prefer-destructuring': [
       'error',
       { array: true, object: true },
       { enforceForRenamedProperties: true },
     ],
     camelcase: 'error',
-    'prettier/prettier': [
-      'error',
-      {
-        endOfLine: 'auto',
-      },
-    ],
   },
 };
