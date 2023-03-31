@@ -25,12 +25,11 @@ export class User extends BaseEntity {
   @Column()
   userId: string;
 
-  @Column({
-    select: false,
-  })
+  @Column()
   password: string;
 
   @Column({
+    type: 'int',
     default: 10000,
   })
   point = 10000;

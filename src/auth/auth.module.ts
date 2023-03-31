@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,13 +15,14 @@ import { UserRepository } from './user.repository';
 @Module({
   imports: [
     JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
         secret: config.get<string>('JWT_ACCESSTOKEN_SECRET'),
         signOptions: {
           expiresIn: 3600,
         },
       }),
+      inject: [ConfigService],
     }),
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -29,7 +30,7 @@ import { UserRepository } from './user.repository';
     TypeOrmModule.forFeature([User]),
     TypeOrmExModule.forCustomRepository([UserRepository]),
   ],
-  providers: [AuthService, JwtStrategy, JwtService],
+  providers: [AuthService, JwtStrategy, JwtService, ConfigService],
   controllers: [AuthController],
   exports: [
     AuthService,
@@ -37,6 +38,7 @@ import { UserRepository } from './user.repository';
     JwtService,
     TypeOrmExModule,
     TypeOrmModule,
+    ConfigService,
   ],
 })
 export class AuthModule {}
