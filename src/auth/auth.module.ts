@@ -38,7 +38,7 @@ import { UserRepository } from './user.repository';
     JwtService,
     TypeOrmExModule,
     TypeOrmModule,
-    ConfigService,
+    ConfigModule,
   ],
 })
 export class AuthModule {}
