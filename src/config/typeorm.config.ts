@@ -6,7 +6,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions | Promise<TypeOrmModuleOptions> {
     return {
       type: 'mysql',
-      host: process.env.DB_HOST,
+      host: process.env.LAUNCH_ENV === 'docker-compose' ? 'mysql' : 'localhost',
       port: parseInt(process.env.DB_PORT, 10) || 3306,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,

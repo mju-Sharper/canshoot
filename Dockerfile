@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 
 COPY --from=INSTALLER /usr/src/app .
 
-ENV NODE_ENV production
+ENV LAUNCH_ENV docker-compose
 ARG DB_HOST 
 ARG DB_PORT 
 ARG DB_USERNAME 
