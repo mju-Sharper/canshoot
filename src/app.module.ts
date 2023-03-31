@@ -4,17 +4,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { typeORMConfig } from './config/typeorm.config';
+import { AuthModule } from './auth/auth.module';
+import { DatabaseConfiguration } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
 
-const businessModules = [];
+const businessModules = [AuthModule];
 
 const libModules = [
   ConfigModule.forRoot({
     isGlobal: true,
     validationSchema,
   }),
-  TypeOrmModule.forRoot(typeORMConfig),
+  TypeOrmModule.forRootAsync({
+    useClass: DatabaseConfiguration,
+  }),
 ];
 
 @Module({

@@ -12,6 +12,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
+      - JWT_ACCESSTOKEN_SECRET=${JWT_ACCESSTOKEN_SECRET}
 
   mysql:
     image: mysql:latest
