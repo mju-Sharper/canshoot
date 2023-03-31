@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/const';
 import { Repository } from 'typeorm';
 
 import { User } from './user.entity';
@@ -15,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     readonly configService: ConfigService,
   ) {
     super({
-      secretOrKey: configService.get<string>('JWT_ACCESSTOKEN_SECRET'),
+      secretOrKey: configService.get<string>(JWT_ACCESS_TOKEN_SECRET_KEY),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }

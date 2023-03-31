@@ -4,6 +4,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/const';
 import { TypeOrmExModule } from 'src/util/typeormex.module';
 
 import { AuthController } from './auth.controller';
@@ -17,7 +18,7 @@ import { UserRepository } from './user.repository';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
-        secret: config.get<string>('JWT_ACCESSTOKEN_SECRET'),
+        secret: config.get<string>(JWT_ACCESS_TOKEN_SECRET_KEY),
         signOptions: {
           expiresIn: 3600,
         },
