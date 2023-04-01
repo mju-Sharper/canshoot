@@ -10,12 +10,12 @@ import { SignUpDto } from './dto/signUp.dto';
 export class AuthController {
   constructor(readonly authService: AuthService) {}
 
-  @Post('signUp')
+  @Post('signup')
   signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
     return this.authService.signUp(signUpDto);
   }
 
-  @Post('signIn')
+  @Post('signin')
   signIn(@Body() signInDto: SignInDto): Promise<ResponseDto> {
     return this.authService.signIn(signInDto);
   }
