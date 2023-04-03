@@ -4,8 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ResponseDto } from 'src/common/dtos';
 
-import { SignInDto } from './dto/signIn.dto';
-import { SignUpDto } from './dto/signUp.dto';
+import { SignInDto, SignUpDto } from './dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()
