@@ -4,12 +4,13 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/const';
+import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/common/consts';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.startegy';
 import { User } from './user.entity';
+import { UserRepository } from './user.repository';
 
 @Module({
   imports: [
@@ -29,8 +30,21 @@ import { User } from './user.entity';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [AuthService, JwtStrategy, JwtService, ConfigService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtService,
+    ConfigService,
+    UserRepository,
+  ],
   controllers: [AuthController],
-  exports: [AuthService, JwtStrategy, JwtService, TypeOrmModule, ConfigModule],
+  exports: [
+    AuthService,
+    JwtStrategy,
+    JwtService,
+    TypeOrmModule,
+    ConfigModule,
+    UserRepository,
+  ],
 })
 export class AuthModule {}

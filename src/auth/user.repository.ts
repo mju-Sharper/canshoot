@@ -1,30 +1,33 @@
-import { BadRequestException, HttpException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import * as bcrypt from 'bcrypt';
-import { CustomRepository } from 'src/util/repository.decorator';
 import { Repository } from 'typeorm';
 
 import { SignUpDto } from './dto/signUp.dto';
 import { User } from './user.entity';
 
-@CustomRepository(User)
-export class UserRepository extends Repository<User> {
+@Injectable()
+export class UserRepository {
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
+
   async createUser(signUpDto: SignUpDto) {
-    const { userId, name, password, phone, email } = signUpDto;
+    const { userId, password, phone, email } = signUpDto;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.create({
+    const user = this.userRepository.create({
       phone,
-      name,
       userId,
       password: hashedPassword,
       email,
     });
 
     try {
-      await this.save(user);
+      await this.userRepository.save(user);
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
         throw new BadRequestException('이미 존재하는 아이디입니다.');
@@ -41,7 +44,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserById(userId: string): Promise<User> {
-    const user = await this.findOneBy({
+    const user = await this.userRepository.findOneBy({
       userId,
     });
 

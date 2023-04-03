@@ -1,8 +1,9 @@
 import { Controller } from '@nestjs/common';
 import { Body, Post } from '@nestjs/common/decorators';
 
+import { ResponseDto } from 'src/common/dtos';
+
 import { AuthService } from './auth.service';
-import { ResponseDto } from './dto/response.dto';
 import { SignInDto } from './dto/signIn.dto';
 import { SignUpDto } from './dto/signUp.dto';
 

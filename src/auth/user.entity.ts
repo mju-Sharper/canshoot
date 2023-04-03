@@ -1,21 +1,9 @@
-import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
+import { AbstractEntity } from 'src/common/entities';
+import { Column, Entity, Unique } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'user' })
 @Unique(['userId'])
-export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
-  name: string;
-
+export class User extends AbstractEntity {
   @Column()
   phone: string;
 
@@ -33,7 +21,4 @@ export class User extends BaseEntity {
     default: 10000,
   })
   point = 10000;
-
-  @CreateDateColumn()
-  createdDate: Date;
 }
