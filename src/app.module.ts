@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseConfiguration } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
+import { ProductsModule } from './products/products.module';
 
 const businessModules = [AuthModule];
 
@@ -21,7 +22,7 @@ const libModules = [
 ];
 
 @Module({
-  imports: [...businessModules, ...libModules],
+  imports: [...businessModules, ...libModules, ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })
