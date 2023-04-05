@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/const';
+import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/common/consts';
 import { Repository } from 'typeorm';
 
 import { User } from './user.entity';
@@ -27,7 +27,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: { id },
     });
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException({
+        error: '로그인이 필요한 서비스입니다.',
+      });
     }
 
     return user;
