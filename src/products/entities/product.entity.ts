@@ -1,6 +1,12 @@
 import { User } from 'src/auth/user.entity';
 import { AbstractEntity } from 'src/common/entities';
-import { Column, Entity, ManyToOne, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { Category } from './category.entity';
 
@@ -18,9 +24,17 @@ export class Product extends AbstractEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @Column()
+  categoryId: string;
+
+  @Column()
+  sellerId: string;
+
+  @ManyToOne(() => Category, (category) => category.products, { eager: false })
+  @JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
   category: Category;
 
-  @ManyToOne(() => User, (user) => user.products)
+  @ManyToOne(() => User, (user) => user.products, { eager: false })
+  @JoinColumn({ name: 'sellerId', referencedColumnName: 'id' })
   seller: User;
 }

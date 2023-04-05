@@ -1,8 +1,22 @@
-import { Controller, Get, Post, Patch, Delete, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
+import { GetUserId } from 'src/common/decorators';
+
+import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
 @Controller('products')
+@UseGuards(AuthGuard())
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -12,22 +26,36 @@ export class ProductsController {
   }
 
   @Post()
-  async createProducts() {
-    return this.productsService.createProducts();
+  async createProducts(
+    @Body() createProductDto: CreateProductDto,
+    @GetUserId() sellerId: string,
+  ) {
+    return this.productsService.createProducts(createProductDto, sellerId);
   }
 
-  @Get('/:id')
+  @Get(':id')
   async getProductById(@Param('id') productId: string) {
     return this.productsService.getProductById(productId);
   }
 
-  @Patch('/:id')
-  async updateProductById(@Param('id') productId: string) {
-    return this.productsService.updateProductById(productId);
+  @Patch(':id')
+  async updateProductById(
+    @Body() updateProductDto: UpdateProductDto,
+    @Param('id') productId: string,
+    @GetUserId() userId: string,
+  ) {
+    return this.productsService.updateProduct(
+      productId,
+      userId,
+      updateProductDto,
+    );
   }
 
-  @Delete('/:id')
-  async deleteProductById(@Param('id') productId: string) {
-    return this.productsService.deleteProductById(productId);
+  @Delete(':id')
+  async deleteProductById(
+    @Param('id') productId: string,
+    @GetUserId() userId: string,
+  ) {
+    return this.productsService.deleteProduct(productId, userId);
   }
 }
