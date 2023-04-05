@@ -45,6 +45,7 @@ import { UserRepository } from './user.repository';
     TypeOrmModule,
     ConfigModule,
     UserRepository,
+    PassportModule,
   ],
 })
 export class AuthModule {}
