@@ -24,7 +24,7 @@ export class AuthService {
     const user = await this.userRepository.findUserById(userId);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new BadRequestException('비밀번호가 일치하지 않습니다.');
+      throw new BadRequestException({ error: '비밀번호가 일치하지 않습니다.' });
     }
 
     const payload = { userId };
