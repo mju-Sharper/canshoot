@@ -1,5 +1,6 @@
 import { User } from 'src/auth/user.entity';
 import { AbstractEntity } from 'src/common/entities';
+import { Category } from 'src/common/enums';
 import {
   Column,
   Entity,
@@ -7,8 +8,6 @@ import {
   ManyToOne,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { Category } from './category.entity';
 
 @Entity({ name: 'Products' })
 export class Product extends AbstractEntity {
@@ -25,13 +24,9 @@ export class Product extends AbstractEntity {
   updatedAt: Date;
 
   @Column()
-  categoryId: string;
-
-  @Column()
   sellerId: string;
 
-  @ManyToOne(() => Category, (category) => category.products, { eager: false })
-  @JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
+  @Column()
   category: Category;
 
   @ManyToOne(() => User, (user) => user.products, { eager: false })

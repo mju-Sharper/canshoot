@@ -8,15 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
-import { Category, Product } from './entities';
+import { Product } from './entities';
 
 @Injectable()
 export class ProductRepository {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async getProductByIdOrFail(id: string): Promise<Product> {
@@ -25,7 +23,7 @@ export class ProductRepository {
     });
     if (!targetProduct) {
       throw new BadRequestException({
-        error: '잘못된 id입니다.',
+        error: '유효하지 않은 상품 id입니다.',
       });
     }
     return targetProduct;
@@ -34,44 +32,38 @@ export class ProductRepository {
   async createProduct(
     createProductDto: CreateProductDto,
     sellerId: string,
-  ): Promise<string> {
-    const { name, startingBid, auctionTime, categoryId } = createProductDto;
-
-    const category = await this.categoryRepository.findOneBy({
-      id: categoryId,
-    });
-    if (!category) {
-      throw new BadRequestException({
-        error: '유효하지 않은 카테고리입니다.',
-      });
-    }
+  ): Promise<Product> {
+    const { name, startingBid, auctionTime, category } = createProductDto;
 
     const product = this.productRepository.create({
       name,
       startingBid,
       auctionTime,
-      categoryId,
+      category,
       sellerId,
     });
 
     await this.productRepository.save(product);
-    return 'create product';
+    return product;
   }
 
   async updateProduct(
     productId: string,
     userId: string,
     updateProductDto: UpdateProductDto,
-  ): Promise<string> {
+  ): Promise<Product> {
+    const targetProduct = await this.getProductByIdOrFail(productId);
     await this.catchInvalidUser(productId, userId);
-    await this.productRepository.update(productId, updateProductDto);
-    return 'update product';
+    const updatedProduct = { ...targetProduct, ...updateProductDto };
+    await this.productRepository.save(updatedProduct);
+    return updatedProduct;
   }
 
-  async deleteProduct(productId: string, userId: string): Promise<string> {
+  async deleteProduct(productId: string, userId: string): Promise<Product> {
+    const targetProduct = await this.getProductByIdOrFail(productId);
     await this.catchInvalidUser(productId, userId);
     await this.productRepository.delete(productId);
-    return 'delete product';
+    return targetProduct;
   }
 
   async catchInvalidUser(productId: string, userId: string): Promise<string> {

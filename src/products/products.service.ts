@@ -17,9 +17,12 @@ export class ProductsService {
   async createProducts(
     createProductDto: CreateProductDto,
     sellerId: string,
-  ): Promise<ResponseDto> {
-    await this.productRepository.createProduct(createProductDto, sellerId);
-    return new ResponseDto('상품 등록이 완료되었습니다.');
+  ): Promise<ResponseDto<Product>> {
+    const createdProduct = await this.productRepository.createProduct(
+      createProductDto,
+      sellerId,
+    );
+    return new ResponseDto('상품 등록이 완료되었습니다.', { createdProduct });
   }
 
   async getProductById(productId: string): Promise<Product> {
@@ -33,17 +36,25 @@ export class ProductsService {
     productId: string,
     userId: string,
     updateProductDto: UpdateProductDto,
-  ): Promise<ResponseDto> {
-    await this.productRepository.updateProduct(
+  ): Promise<ResponseDto<Product>> {
+    const updatedProduct = await this.productRepository.updateProduct(
       productId,
       userId,
       updateProductDto,
     );
-    return new ResponseDto('상품 업데이트가 완료되었습니다.');
+    return new ResponseDto('상품 업데이트가 완료되었습니다.', {
+      updatedProduct,
+    });
   }
 
-  async deleteProduct(productId: string, userId: string): Promise<ResponseDto> {
-    await this.productRepository.deleteProduct(productId, userId);
-    return new ResponseDto('상품 삭제가 완료되었습니다.');
+  async deleteProduct(
+    productId: string,
+    userId: string,
+  ): Promise<ResponseDto<Product>> {
+    const deletedProduct = await this.productRepository.deleteProduct(
+      productId,
+      userId,
+    );
+    return new ResponseDto('상품 삭제가 완료되었습니다.', { deletedProduct });
   }
 }

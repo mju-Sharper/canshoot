@@ -11,8 +11,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 import { GetUserId } from 'src/common/decorators';
+import { ResponseDto } from 'src/common/dtos';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
+import { Product } from './entities';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -29,7 +31,7 @@ export class ProductsController {
   async createProducts(
     @Body() createProductDto: CreateProductDto,
     @GetUserId() sellerId: string,
-  ) {
+  ): Promise<ResponseDto<Product>> {
     return await this.productsService.createProducts(
       createProductDto,
       sellerId,
@@ -37,7 +39,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  async getProductById(@Param('id') productId: string) {
+  async getProductById(@Param('id') productId: string): Promise<Product> {
     return await this.productsService.getProductById(productId);
   }
 
@@ -46,7 +48,7 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
     @Param('id') productId: string,
     @GetUserId() userId: string,
-  ) {
+  ): Promise<ResponseDto<Product>> {
     return await this.productsService.updateProduct(
       productId,
       userId,
@@ -58,7 +60,7 @@ export class ProductsController {
   async deleteProductById(
     @Param('id') productId: string,
     @GetUserId() userId: string,
-  ) {
+  ): Promise<ResponseDto<Product>> {
     return await this.productsService.deleteProduct(productId, userId);
   }
 }

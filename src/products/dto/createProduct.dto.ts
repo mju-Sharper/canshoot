@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsString } from 'class-validator';
+import { Category } from 'src/common/enums';
 
 export class CreateProductDto {
   @IsString({
@@ -7,9 +8,7 @@ export class CreateProductDto {
   })
   name: string;
 
-  @IsNumber(null, {
-    message: '경매 시작가는 필수 입력값입니다.',
-  })
+  @Type(() => Number)
   startingBid: number;
 
   @IsDate({
@@ -18,8 +17,8 @@ export class CreateProductDto {
   @Type(() => Date)
   auctionTime: Date;
 
-  @IsString({
-    message: '품목은 필수 입력값입니다.',
+  @IsEnum(Category, {
+    message: '유효하지 않은 카테고리입니다.',
   })
-  categoryId: string;
+  category: Category;
 }

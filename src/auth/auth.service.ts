@@ -14,12 +14,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<ResponseDto> {
+  async signUp(signUpDto: SignUpDto): Promise<ResponseDto<string>> {
     await this.userRepository.createUser(signUpDto);
     return new ResponseDto('회원가입에 성공했습니다.');
   }
 
-  async signIn(signInDto: SignInDto): Promise<ResponseDto> {
+  async signIn(signInDto: SignInDto): Promise<ResponseDto<string>> {
     const { userId, password } = signInDto;
     const user = await this.userRepository.findUserById(userId);
 
