@@ -7,8 +7,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseConfiguration } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
+import { ProductsModule } from './products/products.module';
 
-const businessModules = [AuthModule];
+const businessModules = [AuthModule, ProductsModule];
 
 const libModules = [
   ConfigModule.forRoot({

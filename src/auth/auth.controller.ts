@@ -11,12 +11,12 @@ export class AuthController {
   constructor(readonly authService: AuthService) {}
 
   @Post('signup')
-  signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
+  signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto<string>> {
     return this.authService.signUp(signUpDto);
   }
 
   @Post('signin')
-  signIn(@Body() signInDto: SignInDto): Promise<ResponseDto> {
+  signIn(@Body() signInDto: SignInDto): Promise<ResponseDto<string>> {
     return this.authService.signIn(signInDto);
   }
 }

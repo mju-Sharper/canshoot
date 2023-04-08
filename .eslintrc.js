@@ -57,6 +57,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error'],
     'no-empty-function': 'off',
     'class-methods-use-this': 'off',
+    'no-return-await': 'off',
+    'no-shadow': 'off',
     'prefer-destructuring': [
       'error',
       { array: true, object: true },
