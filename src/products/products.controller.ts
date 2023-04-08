@@ -7,11 +7,14 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { GetUserId } from 'src/common/decorators';
 import { ResponseDto } from 'src/common/dtos';
+import { PageDto } from 'src/common/dtos/page.dto';
+import { PageOptionsDto } from 'src/common/dtos/pageOptions.dto';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { Product } from './entities';
@@ -23,8 +26,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  async getProducts() {
-    return this.productsService.getProducts();
+  async getProducts(
+    @Query() pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<Product>> {
+    return this.productsService.getProducts(pageOptionsDto);
   }
 
   @Post()

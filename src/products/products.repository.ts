@@ -5,6 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { PageDto } from 'src/common/dtos/page.dto';
+import { PageMetaDto } from 'src/common/dtos/pageMeta.dto';
+import { PageOptionsDto } from 'src/common/dtos/pageOptions.dto';
 import { Repository } from 'typeorm';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -16,6 +19,20 @@ export class ProductRepository {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
   ) {}
+
+  async getProducts(pageOptionsDto: PageOptionsDto): Promise<PageDto<Product>> {
+    const { order, skip, take, category } = pageOptionsDto;
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+
+    queryBuilder.orderBy(order).skip(skip).take(take).where({ category });
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+    return new PageDto(entities, pageMetaDto);
+  }
 
   async getProductByIdOrFail(id: string): Promise<Product> {
     const targetProduct = this.productRepository.findOneBy({

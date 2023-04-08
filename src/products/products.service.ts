@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { ResponseDto } from 'src/common/dtos';
+import { PageDto } from 'src/common/dtos/page.dto';
+import { PageOptionsDto } from 'src/common/dtos/pageOptions.dto';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { Product } from './entities';
@@ -10,8 +12,8 @@ import { ProductRepository } from './products.repository';
 export class ProductsService {
   constructor(private productRepository: ProductRepository) {}
 
-  async getProducts() {
-    return 'return products';
+  async getProducts(pageOptionsDto: PageOptionsDto): Promise<PageDto<Product>> {
+    return this.productRepository.getProducts(pageOptionsDto);
   }
 
   async createProducts(
