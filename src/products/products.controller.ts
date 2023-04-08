@@ -8,13 +8,13 @@ import {
   Body,
   UseGuards,
   Query,
+  Req,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { Request } from 'express';
 import { GetUserId } from 'src/common/decorators';
-import { ResponseDto } from 'src/common/dtos';
-import { PageDto } from 'src/common/dtos/page.dto';
-import { PageOptionsDto } from 'src/common/dtos/pageOptions.dto';
+import { ResponseDto, PageDto, PageOptionsDto } from 'src/common/dtos';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { Product } from './entities';
@@ -27,9 +27,10 @@ export class ProductsController {
 
   @Get()
   async getProducts(
+    @Req() { url }: Request,
     @Query() pageOptionsDto: PageOptionsDto,
   ): Promise<PageDto<Product>> {
-    return this.productsService.getProducts(pageOptionsDto);
+    return this.productsService.getProducts(pageOptionsDto, url);
   }
 
   @Post()

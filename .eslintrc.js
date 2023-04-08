@@ -34,6 +34,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/prefer-default-export': 'off',
     'import/extensions': 'off',
+    'import/no-extraneous-dependencies': 'off',
     'import/order': [
       'error',
       {
@@ -59,6 +60,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-return-await': 'off',
     'no-shadow': 'off',
+    'no-nested-ternary': 'off',
     'prefer-destructuring': [
       'error',
       { array: true, object: true },

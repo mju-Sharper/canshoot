@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PageDto } from 'src/common/dtos/page.dto';
-import { PageMetaDto } from 'src/common/dtos/pageMeta.dto';
-import { PageOptionsDto } from 'src/common/dtos/pageOptions.dto';
+import {
+  PageDto,
+  PageOptionsDto,
+  PageMetaDto,
+  PageLinkDto,
+} from 'src/common/dtos';
 import { Repository } from 'typeorm';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -20,18 +23,36 @@ export class ProductRepository {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async getProducts(pageOptionsDto: PageOptionsDto): Promise<PageDto<Product>> {
-    const { order, skip, take, category } = pageOptionsDto;
+  async getProducts(
+    pageOptionsDto: PageOptionsDto,
+    url: string,
+  ): Promise<PageDto<Product>> {
+    const { order, skip, take, category, search } = pageOptionsDto;
     const queryBuilder = this.productRepository.createQueryBuilder('product');
 
-    queryBuilder.orderBy(order).skip(skip).take(take).where({ category });
+    queryBuilder.skip(skip).take(take);
 
+    if (category) {
+      queryBuilder.andWhere('product.category= :category', { category });
+    }
+    if (search) {
+      queryBuilder.andWhere('product.name like :search', {
+        search: `%${search}%`,
+      });
+    }
+    if (order) {
+      queryBuilder.orderBy('product.startingBid', order);
+    }
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-
-    return new PageDto(entities, pageMetaDto);
+    const pageLinkDto = new PageLinkDto({
+      url,
+      itemCount,
+      pageOptionsDto,
+    });
+    return new PageDto(entities, pageMetaDto, pageLinkDto);
   }
 
   async getProductByIdOrFail(id: string): Promise<Product> {

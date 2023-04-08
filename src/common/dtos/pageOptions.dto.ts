@@ -4,10 +4,10 @@ import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { Order } from '../consts';
 import { Category } from '../enums';
 
-export abstract class PageOptionsDto {
+export class PageOptionsDto {
   @IsEnum(Order)
   @IsOptional()
-  order?: Order = Order.ASC;
+  order?: Order;
 
   @Type(() => Number)
   @IsInt()
@@ -20,7 +20,7 @@ export abstract class PageOptionsDto {
   @Min(1)
   @Max(50)
   @IsOptional()
-  take?: number = 10;
+  take?: number = 3;
 
   @IsOptional()
   search?: string;

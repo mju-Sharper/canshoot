@@ -1,4 +1,4 @@
-import { PageOptionsDto } from './pageOptions.dto';
+import { PageOptionsDto } from '.';
 
 interface IpageMetaDto {
   pageOptionsDto: PageOptionsDto;
