@@ -5,6 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import {
+  PageDto,
+  PageOptionsDto,
+  PageMetaDto,
+  PageLinkDto,
+} from 'src/common/dtos';
 import { Repository } from 'typeorm';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -16,6 +22,38 @@ export class ProductRepository {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
   ) {}
+
+  async getProducts(
+    pageOptionsDto: PageOptionsDto,
+    url: string,
+  ): Promise<PageDto<Product>> {
+    const { order, skip, take, category, search } = pageOptionsDto;
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+
+    queryBuilder.skip(skip).take(take);
+
+    if (category) {
+      queryBuilder.andWhere('product.category= :category', { category });
+    }
+    if (search) {
+      queryBuilder.andWhere('product.name like :search', {
+        search: `%${search}%`,
+      });
+    }
+    if (order) {
+      queryBuilder.orderBy('product.startingBid', order);
+    }
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+    const pageLinkDto = new PageLinkDto({
+      url,
+      itemCount,
+      pageOptionsDto,
+    });
+    return new PageDto(entities, pageMetaDto, pageLinkDto);
+  }
 
   async getProductByIdOrFail(id: string): Promise<Product> {
     const targetProduct = this.productRepository.findOneBy({
@@ -32,10 +70,12 @@ export class ProductRepository {
   async createProduct(
     createProductDto: CreateProductDto,
     sellerId: string,
+    imageUrl: string,
   ): Promise<Product> {
     const { name, startingBid, auctionTime, category } = createProductDto;
 
     const product = this.productRepository.create({
+      imageUrl,
       name,
       startingBid,
       auctionTime,
