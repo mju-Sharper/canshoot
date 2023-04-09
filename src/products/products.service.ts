@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Service } from 'src/aws/s3.service';
 import { ResponseDto, PageOptionsDto, PageDto } from 'src/common/dtos';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -8,7 +10,10 @@ import { ProductRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
-  constructor(private productRepository: ProductRepository) {}
+  constructor(
+    private productRepository: ProductRepository,
+    private s3Service: S3Service,
+  ) {}
 
   async getProducts(
     pageOptionsDto: PageOptionsDto,
@@ -20,12 +25,17 @@ export class ProductsService {
   async createProducts(
     createProductDto: CreateProductDto,
     sellerId: string,
+    image: Express.Multer.File,
   ): Promise<ResponseDto<Product>> {
+    const imageUrl = await this.uploadImage(image);
     const createdProduct = await this.productRepository.createProduct(
       createProductDto,
       sellerId,
+      imageUrl,
     );
-    return new ResponseDto('상품 등록이 완료되었습니다.', { createdProduct });
+    return new ResponseDto('상품 등록이 완료되었습니다.', {
+      createdProduct,
+    });
   }
 
   async getProductById(productId: string): Promise<Product> {
@@ -59,5 +69,28 @@ export class ProductsService {
       userId,
     );
     return new ResponseDto('상품 삭제가 완료되었습니다.', { deletedProduct });
+  }
+
+  async uploadImage(image: Express.Multer.File): Promise<string> {
+    try {
+      const path = `product_image/${image.originalname}`;
+      await this.s3Service.client.send(
+        new PutObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: path,
+          Body: image.buffer,
+          ACL: 'public-read',
+          ContentType: 'image/jpeg',
+        }),
+      );
+      return `${process.env.AWS_S3_BUCKET_URL}/${path}`;
+    } catch (e) {
+      throw new HttpException(
+        {
+          error: '잠시후 다시 시도해주세요.',
+        },
+        500,
+      );
+    }
   }
 }

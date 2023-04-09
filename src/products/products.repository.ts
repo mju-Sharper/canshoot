@@ -70,10 +70,12 @@ export class ProductRepository {
   async createProduct(
     createProductDto: CreateProductDto,
     sellerId: string,
+    imageUrl: string,
   ): Promise<Product> {
     const { name, startingBid, auctionTime, category } = createProductDto;
 
     const product = this.productRepository.create({
+      imageUrl,
       name,
       startingBid,
       auctionTime,

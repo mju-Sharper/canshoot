@@ -61,6 +61,7 @@ module.exports = {
     'no-return-await': 'off',
     'no-shadow': 'off',
     'no-nested-ternary': 'off',
+    'no-undef': 'off',
     'prefer-destructuring': [
       'error',
       { array: true, object: true },

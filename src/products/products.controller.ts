@@ -9,8 +9,11 @@ import {
   UseGuards,
   Query,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Request } from 'express';
 import { GetUserId } from 'src/common/decorators';
@@ -21,7 +24,6 @@ import { Product } from './entities';
 import { ProductsService } from './products.service';
 
 @Controller('products')
-@UseGuards(AuthGuard())
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -33,22 +35,28 @@ export class ProductsController {
     return this.productsService.getProducts(pageOptionsDto, url);
   }
 
+  @UseGuards(AuthGuard())
   @Post()
+  @UseInterceptors(FileInterceptor('image'))
   async createProducts(
     @Body() createProductDto: CreateProductDto,
+    @UploadedFile() image: Express.Multer.File,
     @GetUserId() sellerId: string,
-  ): Promise<ResponseDto<Product>> {
+  ): Promise<ResponseDto<any>> {
     return await this.productsService.createProducts(
       createProductDto,
       sellerId,
+      image,
     );
   }
 
+  @UseGuards(AuthGuard())
   @Get(':id')
   async getProductById(@Param('id') productId: string): Promise<Product> {
     return await this.productsService.getProductById(productId);
   }
 
+  @UseGuards(AuthGuard())
   @Patch(':id')
   async updateProductById(
     @Body() updateProductDto: UpdateProductDto,
@@ -62,6 +70,7 @@ export class ProductsController {
     );
   }
 
+  @UseGuards(AuthGuard())
   @Delete(':id')
   async deleteProductById(
     @Param('id') productId: string,
