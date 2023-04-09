@@ -86,6 +86,7 @@ export class ProductsService {
       );
       return `${process.env.AWS_S3_BUCKET_URL}/${path}`;
     } catch (e) {
+      console.error(e);
       throw new HttpException(
         {
           error: '잠시후 다시 시도해주세요.',
