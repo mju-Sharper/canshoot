@@ -15,7 +15,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { Request } from 'express';
+import { Request, Express } from 'express';
 import { GetUserId } from 'src/common/decorators';
 import { ResponseDto, PageDto, PageOptionsDto } from 'src/common/dtos';
 
