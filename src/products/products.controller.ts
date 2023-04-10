@@ -40,7 +40,7 @@ export class ProductsController {
   async createProducts(
     @Body() createProductDto: CreateProductDto,
     @GetUserId() sellerId: string,
-  ): Promise<ResponseDto<any>> {
+  ): Promise<ResponseDto<Product>> {
     return await this.productsService.createProducts(
       createProductDto,
       sellerId,
