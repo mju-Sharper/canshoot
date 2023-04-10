@@ -17,7 +17,9 @@ export class ProductsService {
 
   async uploadImage(image: Express.Multer.File): Promise<ResponseDto<string>> {
     const imageUrl = await this.s3Service.uploadImage(image);
-    return new ResponseDto<string>('이미지가 등록되었습니다.', { imageUrl });
+    return new ResponseDto<string>('이미지 등록이 완료되었습니다.', {
+      imageUrl,
+    });
   }
 
   async getProducts(
