@@ -26,7 +26,7 @@ export class ProductsService {
     pageOptionsDto: PageOptionsDto,
     url: string,
   ): Promise<PageDto<Product>> {
-    return this.productRepository.getProducts(pageOptionsDto, url);
+    return await this.productRepository.getProducts(pageOptionsDto, url);
   }
 
   async createProducts(

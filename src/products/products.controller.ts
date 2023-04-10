@@ -32,7 +32,7 @@ export class ProductsController {
     @Req() { url }: Request,
     @Query() pageOptionsDto: PageOptionsDto,
   ): Promise<PageDto<Product>> {
-    return this.productsService.getProducts(pageOptionsDto, url);
+    return await this.productsService.getProducts(pageOptionsDto, url);
   }
 
   @UseGuards(AuthGuard())
@@ -53,7 +53,7 @@ export class ProductsController {
   async uploadImage(
     @UploadedFile() image: Express.Multer.File,
   ): Promise<ResponseDto<string>> {
-    return this.productsService.uploadImage(image);
+    return await this.productsService.uploadImage(image);
   }
 
   @UseGuards(AuthGuard())
