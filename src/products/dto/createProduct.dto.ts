@@ -21,4 +21,9 @@ export class CreateProductDto {
     message: '유효하지 않은 카테고리입니다.',
   })
   category: Category;
+
+  @IsString({
+    message: '상품이미지는 필수 입력값입니다.',
+  })
+  imageUrl: string;
 }

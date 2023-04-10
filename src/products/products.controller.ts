@@ -37,17 +37,23 @@ export class ProductsController {
 
   @UseGuards(AuthGuard())
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
   async createProducts(
     @Body() createProductDto: CreateProductDto,
-    @UploadedFile() image: Express.Multer.File,
     @GetUserId() sellerId: string,
   ): Promise<ResponseDto<any>> {
     return await this.productsService.createProducts(
       createProductDto,
       sellerId,
-      image,
     );
+  }
+
+  @UseGuards(AuthGuard())
+  @Post('image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<ResponseDto<string>> {
+    return this.productsService.uploadImage(image);
   }
 
   @UseGuards(AuthGuard())
