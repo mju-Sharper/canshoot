@@ -21,6 +21,9 @@ export class UpdateProductDto {
   auctionTime?: Date;
 
   @IsOptional()
+  imageUrl: string;
+
+  @IsOptional()
   @IsEnum(Category, {
     message: '유효하지 않은 카테고리입니다.',
   })
