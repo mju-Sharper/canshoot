@@ -11,6 +11,8 @@ import {
   Req,
   UseInterceptors,
   UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -51,7 +53,12 @@ export class ProductsController {
   @Post('image')
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(
-    @UploadedFile() image: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new MaxFileSizeValidator({ maxSize: 1000 * 1000 * 100 })],
+      }),
+    )
+    image: Express.Multer.File,
   ): Promise<ResponseDto<string>> {
     return await this.productsService.uploadImage(image);
   }
