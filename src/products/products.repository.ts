@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ProductReturnData } from 'src/common/consts';
 import {
   PageDto,
   PageOptionsDto,
@@ -114,5 +115,46 @@ export class ProductRepository {
       });
     }
     return 'this user has authority';
+  }
+
+  async getUserProducts(
+    url: string,
+    pageOptionsDto: PageOptionsDto,
+    userId: string,
+  ) {
+    const { order, skip, take, category, search } = pageOptionsDto;
+    const productsQueryBuilder = this.productRepository
+      .createQueryBuilder('Products')
+      .select(ProductReturnData.map((data) => `Products.${data}`))
+      .leftJoin('Products.seller', 'user')
+      .where('user.id=:userId', { userId });
+
+    if (order) {
+      productsQueryBuilder.orderBy('Products.startingBid', order);
+    }
+
+    productsQueryBuilder.skip(skip).take(take);
+
+    if (category) {
+      productsQueryBuilder.andWhere('Products.category= :category', {
+        category,
+      });
+    }
+    if (search) {
+      productsQueryBuilder.andWhere('Products.name like :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    const itemCount = await productsQueryBuilder.getCount();
+    const { entities } = await productsQueryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+    const pageLinkDto = new PageLinkDto({
+      url,
+      itemCount,
+      pageOptionsDto,
+    });
+    return new PageDto(entities, pageMetaDto, pageLinkDto);
   }
 }
