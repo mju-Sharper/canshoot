@@ -24,5 +24,5 @@ export class User extends AbstractEntity {
   point = 10000;
 
   @OneToMany(() => Product, (products) => products.seller)
-  products: Product;
+  products: Product[];
 }

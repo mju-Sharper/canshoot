@@ -74,4 +74,16 @@ export class ProductsService {
     );
     return new ResponseDto('상품 삭제가 완료되었습니다.', { deletedProduct });
   }
+
+  async getUserProducts(
+    url: string,
+    pageOptionsDto: PageOptionsDto,
+    userId: string,
+  ) {
+    return await this.productRepository.getUserProducts(
+      url,
+      pageOptionsDto,
+      userId,
+    );
+  }
 }

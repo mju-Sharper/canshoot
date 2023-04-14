@@ -29,6 +29,20 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(AuthGuard())
+  @Get('user-products')
+  async getUserProducts(
+    @Req() { url }: Request,
+    @Query() pageOptionsDto: PageOptionsDto,
+    @GetUserId() userId: string,
+  ) {
+    return await this.productsService.getUserProducts(
+      url,
+      pageOptionsDto,
+      userId,
+    );
+  }
+
   @Get()
   async getProducts(
     @Req() { url }: Request,
