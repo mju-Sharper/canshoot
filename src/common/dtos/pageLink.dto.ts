@@ -30,11 +30,13 @@ export class PageLinkDto {
     this.self = decodedUrl;
     this.related = {
       prev_uri:
-        page > 1 ? returnUrl.replace(`page=${page}`, `page=${page - 1}`) : null,
+        page > 1 && page <= totalPage
+          ? returnUrl.replace(`page=${page}`, `page=${page - 1}`)
+          : null,
       next_uri:
-        page === totalPage
-          ? null
-          : returnUrl.replace(`page=${page}`, `page=${page + 1}`),
+        page >= 1 && page < totalPage
+          ? returnUrl.replace(`page=${page}`, `page=${page + 1}`)
+          : null,
     };
   }
 }
