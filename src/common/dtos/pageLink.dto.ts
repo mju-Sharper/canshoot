@@ -19,21 +19,24 @@ export class PageLinkDto {
   constructor({ url, itemCount, pageOptionsDto }: IPageLinkDto) {
     const { page, take } = pageOptionsDto;
     const totalPage = Math.ceil(itemCount / take);
+    const decodedUrl = decodeURIComponent(url);
 
-    const returnUrl = url.includes('page')
-      ? url
-      : url.includes('?')
-      ? url.concat('&page=1')
-      : url.concat('?page=1');
+    const returnUrl = decodedUrl.includes('page')
+      ? decodedUrl
+      : decodedUrl.includes('?')
+      ? decodedUrl.concat('&page=1')
+      : decodedUrl.concat('?page=1');
 
-    this.self = url;
+    this.self = decodedUrl;
     this.related = {
       prev_uri:
-        page > 1 ? returnUrl.replace(`page=${page}`, `page=${page - 1}`) : null,
+        page > 1 && page <= totalPage
+          ? returnUrl.replace(`page=${page}`, `page=${page - 1}`)
+          : null,
       next_uri:
-        page === totalPage
-          ? null
-          : returnUrl.replace(`page=${page}`, `page=${page + 1}`),
+        page >= 1 && page < totalPage
+          ? returnUrl.replace(`page=${page}`, `page=${page + 1}`)
+          : null,
     };
   }
 }

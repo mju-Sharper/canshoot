@@ -17,7 +17,7 @@ export class Product extends AbstractEntity {
   @Column()
   startingBid: number;
 
-  @Column({ length: 512 })
+  @Column()
   imageUrl: string;
 
   @Column()
