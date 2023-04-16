@@ -23,7 +23,7 @@ export class PageOptionsDto {
   take?: number = 3;
 
   @IsOptional()
-  search?: string;
+  search?: string = '';
 
   @IsEnum(Category)
   @IsOptional()

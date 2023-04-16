@@ -31,6 +31,9 @@ export class ProductRepository {
     const { order, skip, take, category, search } = pageOptionsDto;
     const queryBuilder = this.productRepository.createQueryBuilder('product');
 
+    if (order) {
+      queryBuilder.orderBy('product.startingBid', order);
+    }
     queryBuilder.skip(skip).take(take);
 
     if (category) {
@@ -41,9 +44,7 @@ export class ProductRepository {
         search: `%${search}%`,
       });
     }
-    if (order) {
-      queryBuilder.orderBy('product.startingBid', order);
-    }
+
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
 
