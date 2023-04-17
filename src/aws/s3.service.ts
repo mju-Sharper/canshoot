@@ -3,6 +3,7 @@ import { Injectable, Inject, HttpException } from '@nestjs/common';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Express } from 'express';
 import { AWS_MODULE_OPTIONS } from 'src/common/consts';
+import { v4 } from 'uuid';
 
 import { AwsModuleOptions } from './aws.module';
 
@@ -22,7 +23,7 @@ export class S3Service {
 
   async uploadImage(image: Express.Multer.File) {
     try {
-      const path = `product_image/${image.originalname}`;
+      const path = `product_image/${v4()}`;
       await this.client.send(
         new PutObjectCommand({
           Bucket: process.env.AWS_S3_BUCKET,
