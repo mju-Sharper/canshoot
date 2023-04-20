@@ -31,19 +31,16 @@ export class ProductRepository {
     const { order, skip, take, category, search } = pageOptionsDto;
     const queryBuilder = this.productRepository.createQueryBuilder('product');
 
-    if (order) {
-      queryBuilder.orderBy('product.startingBid', order);
-    }
-    queryBuilder.skip(skip).take(take);
-
-    if (category) {
-      queryBuilder.andWhere('product.category= :category', { category });
-    }
-    if (search) {
-      queryBuilder.andWhere('product.name like :search', {
+    queryBuilder
+      .skip(skip)
+      .take(take)
+      .andWhere('product.category in (:category)', {
+        category,
+      })
+      .andWhere('product.name like :search', {
         search: `%${search}%`,
-      });
-    }
+      })
+      .orderBy('product.startingBid', order);
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();

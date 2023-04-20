@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 
 import { Order } from '../consts';
 import { Category } from '../enums';
@@ -7,7 +7,7 @@ import { Category } from '../enums';
 export class PageOptionsDto {
   @IsEnum(Order)
   @IsOptional()
-  order?: Order;
+  order?: Order = Order.ASC;
 
   @Type(() => Number)
   @IsInt()
@@ -25,9 +25,11 @@ export class PageOptionsDto {
   @IsOptional()
   search?: string = '';
 
-  @IsEnum(Category)
   @IsOptional()
-  category?: Category;
+  @IsArray()
+  @IsEnum(Category, { each: true })
+  @Transform(({ value }) => value.split(','))
+  category?: Category[] = Object.values(Category);
 
   get skip(): number {
     return (this.page - 1) * this.take;
