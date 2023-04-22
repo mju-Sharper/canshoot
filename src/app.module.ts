@@ -8,9 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { AwsModule } from './aws/aws.module';
 import { DatabaseConfiguration } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
+import { EventsModule } from './events/events.module';
 import { ProductsModule } from './products/products.module';
 
-const businessModules = [AuthModule, ProductsModule];
+const businessModules = [AuthModule, ProductsModule, EventsModule];
 
 const libModules = [
   ConfigModule.forRoot({
