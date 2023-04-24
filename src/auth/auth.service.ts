@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
 import { ResponseDto } from 'src/common/dtos';
+import { ProductsService } from 'src/products/products.service';
 
 import { SignInDto, SignUpDto } from './dto';
 import { UserRepository } from './user.repository';
@@ -12,6 +13,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly productService: ProductsService,
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<ResponseDto<string>> {
@@ -32,5 +34,15 @@ export class AuthService {
       secret: process.env.JWT_ACCESSTOKEN_SECRET,
     });
     return new ResponseDto('로그인에 성공했습니다.', { accessToken });
+  }
+
+  async isAdmin(
+    productId: string,
+    userId: string,
+  ): Promise<ResponseDto<boolean>> {
+    await this.productService.getProductById(productId);
+    const result = await this.userRepository.isAdmin(productId, userId);
+
+    return new ResponseDto('요청에 성공했습니다.', { isAdmin: result });
   }
 }
