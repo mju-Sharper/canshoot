@@ -55,7 +55,7 @@ export class ProductRepository {
   }
 
   async getProductByIdOrFail(id: string): Promise<Product> {
-    const targetProduct = this.productRepository.findOneBy({
+    const targetProduct = await this.productRepository.findOneBy({
       id,
     });
     if (!targetProduct) {

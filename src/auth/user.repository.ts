@@ -51,4 +51,18 @@ export class UserRepository {
 
     return user;
   }
+
+  async isAdmin(productId: string, userId: string): Promise<boolean> {
+    const admin = await this.userRepository
+      .createQueryBuilder('User')
+      .leftJoin('User.products', 'products')
+      .where('User.id=:userId', { userId })
+      .andWhere('products.id=:productId', { productId })
+      .execute();
+    if (admin.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
 }

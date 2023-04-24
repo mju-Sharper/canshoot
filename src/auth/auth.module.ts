@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { JWT_ACCESS_TOKEN_SECRET_KEY } from 'src/common/consts';
+import { ProductsModule } from 'src/products/products.module';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -29,14 +30,9 @@ import { UserRepository } from './user.repository';
       defaultStrategy: 'jwt',
     }),
     TypeOrmModule.forFeature([User]),
+    forwardRef(() => ProductsModule),
   ],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    JwtService,
-    ConfigService,
-    UserRepository,
-  ],
+  providers: [AuthService, JwtStrategy, JwtService, UserRepository],
   controllers: [AuthController],
   exports: [
     AuthService,

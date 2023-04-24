@@ -62,11 +62,8 @@ module.exports = {
     'no-shadow': 'off',
     'no-nested-ternary': 'off',
     'no-undef': 'off',
-    'prefer-destructuring': [
-      'error',
-      { array: true, object: true },
-      { enforceForRenamedProperties: true },
-    ],
     camelcase: 'error',
+    'no-param-reassign': 'off',
+    'consistent-return': 'off',
   },
 };
