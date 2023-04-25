@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt-nodejs';
 import { ResponseDto } from 'src/common/dtos';
 import { ProductsService } from 'src/products/products.service';
 
@@ -25,7 +25,7 @@ export class AuthService {
     const { userId, password } = signInDto;
     const user = await this.userRepository.findUserById(userId);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !bcrypt.compareSync(password, user.password)) {
       throw new BadRequestException({ error: '비밀번호가 일치하지 않습니다.' });
     }
 

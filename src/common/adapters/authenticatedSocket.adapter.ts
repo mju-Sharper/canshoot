@@ -12,18 +12,22 @@ export class AuthenticatedSocketIoAdapter extends IoAdapter {
     this.jwtService = this.app.get(JwtService);
   }
 
-  createIOServer(port: number, options: ServerOptions): any {
+  createIOServer(port: number, options: ServerOptions) {
     options.allowRequest = async (request, allowFunction) => {
       const token = request.headers.authorization?.split(' ')[1];
-      const verified =
-        token &&
-        (await this.jwtService.verify(token, {
-          secret: process.env.JWT_ACCESSTOKEN_SECRET,
-        }));
-      if (verified) {
-        return allowFunction(null, true);
+      try {
+        const verified =
+          token &&
+          (await this.jwtService.verify(token, {
+            secret: process.env.JWT_ACCESSTOKEN_SECRET,
+          }));
+        if (verified) {
+          return allowFunction(null, true);
+        }
+        allowFunction('UNAUTHORIZED', false);
+      } catch (e) {
+        allowFunction('UNAUTHORIZED', false);
       }
-      allowFunction('UNAUTHORIZED', false);
     };
 
     return super.createIOServer(port, options);

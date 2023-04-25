@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt-nodejs';
 import { Repository } from 'typeorm';
 
 import { SignUpDto } from './dto/signUp.dto';
@@ -16,8 +16,8 @@ export class UserRepository {
   async createUser(signUpDto: SignUpDto): Promise<string> {
     const { userId, password, phone, email } = signUpDto;
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = bcrypt.genSaltSync();
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     const user = this.userRepository.create({
       phone,
