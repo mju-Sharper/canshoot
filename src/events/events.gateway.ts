@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { UserRepository } from 'src/auth/user.repository';
 
 // room형식은 /ws-${productId}
-@WebSocketGateway({ namespace: /\/ws-.+/ })
+@WebSocketGateway({ namespace: /\/+/ })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private userRepository: UserRepository,
@@ -25,31 +25,34 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('message')
   handleMessage(socket: Socket, payload: string) {
-    const user = this.connectedUsers[socket.nsp.name][socket.id];
+    const userInfo = this.connectedUsers[socket.nsp.name][socket.id];
     this.server.emit('message', {
       message: payload,
-      user,
+      userInfo,
     });
   }
 
   // afterInit() {}
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
-    const payload = this.jwtService.verify(
+    const productId = socket.nsp.name.replace('/', '');
+
+    const payload = await this.jwtService.verify(
       socket.handshake.headers.authorization?.split(' ')[1],
       { secret: process.env.JWT_ACCESSTOKEN_SECRET },
     );
     const user = await this.userRepository.findUserById(payload.userId);
+    const isAdmin = await this.userRepository.isAdmin(productId, user.id);
 
     const { userId } = user;
     const nameSpace = socket.nsp.name;
     if (!this.connectedUsers[nameSpace]) {
       this.connectedUsers[nameSpace] = {};
     }
-    this.connectedUsers[nameSpace][socket.id] = userId;
+    this.connectedUsers[nameSpace][socket.id] = { userId, isAdmin };
 
-    this.server.emit('message', `${userId}님이 입장하셨습니다.`);
-    this.server.emit('connected', {
+    this.server.emit('alert', `${userId}님이 입장하셨습니다.`);
+    this.server.emit('userList', {
       connectedUsers: Object.values(this.connectedUsers[socket.nsp.name]),
     });
   }
@@ -59,10 +62,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const { nsp: nameSpace } = socket;
     const deleteUser = this.connectedUsers[socket.nsp.name][socket.id];
     delete this.connectedUsers[socket.nsp.name][socket.id];
-    nameSpace.emit('onlineList', {
+    nameSpace.emit('userList', {
       connectedUsers: Object.values(this.connectedUsers[socket.nsp.name]),
     });
-    this.server.emit('message', `${deleteUser}님이 퇴장하셨습니다.`);
+    this.server.emit('alert', `${deleteUser}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
 }
