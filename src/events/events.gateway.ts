@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { UserRepository } from 'src/auth/user.repository';
 
 // room형식은 /ws-${productId}
-@WebSocketGateway({ namespace: /\/+/ })
+@WebSocketGateway({ namespace: /\/+/, cors: true })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private userRepository: UserRepository,
