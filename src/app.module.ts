@@ -9,9 +9,15 @@ import { AwsModule } from './aws/aws.module';
 import { DatabaseConfiguration } from './config/typeorm.config';
 import { validationSchema } from './config/validationSchema';
 import { EventsModule } from './events/events.module';
+import { LoggerModule } from './logger/logger.module';
 import { ProductsModule } from './products/products.module';
 
-const businessModules = [AuthModule, ProductsModule, EventsModule];
+const businessModules = [
+  AuthModule,
+  ProductsModule,
+  EventsModule,
+  LoggerModule,
+];
 
 const libModules = [
   ConfigModule.forRoot({
