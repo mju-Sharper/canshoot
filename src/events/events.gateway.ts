@@ -10,6 +10,7 @@ import {
 
 import { Server, Socket } from 'socket.io';
 import { UserRepository } from 'src/auth/user.repository';
+import { LoggerService } from 'src/logger/logger.service';
 
 // room형식은 /ws-${productId}
 @WebSocketGateway({ namespace: /\/+/, cors: true })
@@ -17,6 +18,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
+    private loggerService: LoggerService,
   ) {}
 
   private readonly connectedUsers = {};
@@ -35,6 +37,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // afterInit() {}
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
+    this.loggerService.log('유저가 참여했습니다.');
     const productId = socket.nsp.name.replace('/', '');
 
     const payload = await this.jwtService.verify(
