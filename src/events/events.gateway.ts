@@ -28,9 +28,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message')
   handleMessage(socket: Socket, payload: string) {
     const userInfo = this.connectedUsers[socket.nsp.name][socket.id];
+    const sendTime = this.getTime();
     this.server.emit('message', {
       message: payload,
       userInfo,
+      sendTime,
     });
   }
 
@@ -52,7 +54,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!this.connectedUsers[nameSpace]) {
       this.connectedUsers[nameSpace] = {};
     }
-    this.connectedUsers[nameSpace][socket.id] = { userId, isAdmin };
+
+    const enterTime = this.getTime();
+    this.connectedUsers[nameSpace][socket.id] = { userId, isAdmin, enterTime };
 
     this.server.emit('alert', `${userId}님이 입장하셨습니다.`);
     this.server.emit('userList', {
@@ -71,4 +75,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit('alert', `${deleteUser}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
+
+  private getTime(): string {
+    const time = new Date();
+    const enterTime = `${time.getTime()}:${time.getMinutes()}`;
+    return enterTime;
+  }
 }
