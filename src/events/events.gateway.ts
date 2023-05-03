@@ -1,3 +1,4 @@
+import { UseFilters } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   SubscribeMessage,
@@ -10,10 +11,13 @@ import {
 
 import { Server, Socket } from 'socket.io';
 import { UserRepository } from 'src/auth/user.repository';
+import { WebsocketExceptionsFilter } from 'src/common/filters';
 import { LoggerService } from 'src/logger/logger.service';
+import { getTime } from 'src/util';
 
 // room형식은 /ws-${productId}
 @WebSocketGateway({ namespace: /\/+/, cors: true })
+@UseFilters(WebsocketExceptionsFilter)
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private userRepository: UserRepository,
@@ -28,7 +32,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message')
   handleMessage(socket: Socket, payload: string) {
     const userInfo = this.connectedUsers[socket.nsp.name][socket.id];
-    const sendTime = this.getTime();
+    const sendTime = getTime();
     this.server.emit('message', {
       message: payload,
       userInfo,
@@ -36,7 +40,21 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  // afterInit() {}
+  @SubscribeMessage('bid')
+  handleBid(socket: Socket, payload: string) {
+    const userInfo = this.connectedUsers[socket.nsp.name][socket.id];
+    const sendTime = getTime();
+
+    this.server.emit('message', {
+      message: payload,
+      userInfo,
+      sendTime,
+    });
+
+    // throw new WsException({
+    //   error: '현재 입찰가보다 낮은 금액으로 입찰할 수 없습니다.',
+    // });
+  }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
     this.loggerService.log('유저가 참여했습니다.');
@@ -55,7 +73,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.connectedUsers[nameSpace] = {};
     }
 
-    const enterTime = this.getTime();
+    const enterTime = getTime();
     this.connectedUsers[nameSpace][socket.id] = { userId, isAdmin, enterTime };
 
     this.server.emit('alert', `${userId}님이 입장하셨습니다.`);
@@ -75,10 +93,4 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit('alert', `${deleteUser}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
-
-  private getTime(): string {
-    const time = new Date();
-    const enterTime = `${time.getTime()}:${time.getMinutes()}`;
-    return enterTime;
-  }
 }
