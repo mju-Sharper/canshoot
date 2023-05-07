@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { AuctionRepository } from 'src/auctions/auctions.repository';
 import { ProductReturnData } from 'src/common/consts';
 import {
   PageDto,
@@ -12,6 +13,7 @@ import {
   PageMetaDto,
   PageLinkDto,
 } from 'src/common/dtos';
+import { LoggerService } from 'src/logger/logger.service';
 import { Repository } from 'typeorm';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -22,6 +24,8 @@ export class ProductRepository {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    private readonly auctionRepository: AuctionRepository,
+    private readonly loggerService: LoggerService,
   ) {}
 
   async getProducts(
@@ -83,6 +87,10 @@ export class ProductRepository {
     });
 
     await this.productRepository.save(product);
+
+    this.loggerService.log('상품 등록 완료');
+
+    await this.auctionRepository.createAuction(product, startingBid);
     return product;
   }
 

@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuctionsModule } from './auctions/auctions.module';
 import { AuthModule } from './auth/auth.module';
 import { AwsModule } from './aws/aws.module';
 import { DatabaseConfiguration } from './config/typeorm.config';
@@ -17,6 +18,7 @@ const businessModules = [
   ProductsModule,
   EventsModule,
   LoggerModule,
+  AuctionsModule,
 ];
 
 const libModules = [

@@ -1,3 +1,4 @@
+import { Auction } from 'src/auctions/auctions.entity';
 import { AbstractEntity } from 'src/common/entities';
 import { Product } from 'src/products/entities';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
@@ -25,4 +26,7 @@ export class User extends AbstractEntity {
 
   @OneToMany(() => Product, (products) => products.seller)
   products: Product[];
+
+  @OneToMany(() => Auction, (auction) => auction.bidder)
+  auctions: Auction[];
 }

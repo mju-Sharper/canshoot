@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
+import { Auction } from 'src/auctions/auctions.entity';
 import { User } from 'src/auth/user.entity';
 import { Product } from 'src/products/entities';
 
@@ -12,7 +13,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Product],
+      entities: [User, Product, Auction],
       synchronize: true,
     };
   }
