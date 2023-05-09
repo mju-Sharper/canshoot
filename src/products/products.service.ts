@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { Express } from 'express';
 import { S3Service } from 'src/aws/s3.service';
 import { ResponseDto, PageOptionsDto, PageDto } from 'src/common/dtos';
 

@@ -1,5 +1,5 @@
 export const getTime = (): string => {
   const time = new Date();
-  const enterTime = `${time.getTime()}:${time.getMinutes()}`;
+  const enterTime = `${time.getHours()}:${time.getMinutes()}`;
   return enterTime;
 };

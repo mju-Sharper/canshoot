@@ -1,9 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Auction } from 'src/auctions/auctions.entity';
 import { AuctionsModule } from 'src/auctions/auctions.module';
-import { AuctionRepository } from 'src/auctions/auctions.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { LoggerModule } from 'src/logger/logger.module';
 
@@ -14,12 +12,12 @@ import { ProductsService } from './products.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Auction]),
-    forwardRef(() => AuthModule),
-    AuctionsModule,
+    TypeOrmModule.forFeature([Product]),
     LoggerModule,
+    forwardRef(() => AuctionsModule),
+    forwardRef(() => AuthModule),
   ],
-  providers: [ProductsService, ProductRepository, AuctionRepository],
+  providers: [ProductsService, ProductRepository],
   controllers: [ProductsController],
   exports: [ProductsService, ProductRepository],
 })
