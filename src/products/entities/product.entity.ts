@@ -1,3 +1,4 @@
+import { Auction } from 'src/auctions/auctions.entity';
 import { User } from 'src/auth/user.entity';
 import { AbstractEntity } from 'src/common/entities';
 import { Category } from 'src/common/enums';
@@ -6,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -35,4 +37,7 @@ export class Product extends AbstractEntity {
   @ManyToOne(() => User, (user) => user.products, { eager: false })
   @JoinColumn({ name: 'sellerId', referencedColumnName: 'id' })
   seller: User;
+
+  @OneToOne(() => Auction, (auction) => auction.product)
+  auction: Auction;
 }

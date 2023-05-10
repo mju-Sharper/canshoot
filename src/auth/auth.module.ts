@@ -38,8 +38,6 @@ import { UserRepository } from './user.repository';
     AuthService,
     JwtStrategy,
     JwtService,
-    TypeOrmModule,
-    ConfigModule,
     UserRepository,
     PassportModule,
   ],

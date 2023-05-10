@@ -8,4 +8,5 @@ export enum Category {
   DRINK = 'DRINK',
   HOME = 'HOME',
   ETC = 'ETC',
+  JEWEL = 'JEWEL',
 }
