@@ -104,7 +104,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     nameSpace.emit('userList', {
       connectedUsers: Object.values(this.connectedUsers[this.productId]),
     });
-    this.server.emit('alert', `${deleteUser}님이 퇴장하셨습니다.`);
+    this.server.emit('alert', `${deleteUser.userId}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
 }
