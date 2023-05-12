@@ -84,7 +84,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `입찰가 : ${bid}, 유저 : ${userInfo.userId}, 상품 : ${this.productId}`,
     );
 
-    const updatedAuction = await this.auctionRepository.handleBid(
+    const updatedAuction = await this.auctionRepository.updateBid(
       bid,
       userInfo.userId,
       this.productId,

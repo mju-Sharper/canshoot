@@ -25,21 +25,26 @@ export class AuctionRepository {
     return auction;
   }
 
-  async handleBid(bid: number, userId: string, productId: string) {
-    const user = await this.userRepository.findUserById(userId);
-
-    const auctionQueryBuilder = this.auctionRepository
+  async getAuctionByProductId(productId: string): Promise<Auction> {
+    const targetAuction = await this.auctionRepository
       .createQueryBuilder('auction')
       .leftJoinAndSelect('auction.product', 'Products')
-      .where('Products.id=:productId', { productId });
-
-    const targetAuction = await auctionQueryBuilder.getOne();
+      .where('Products.id=:productId', { productId })
+      .getOne();
 
     if (!targetAuction) {
       throw new BadRequestException({
         error: '유효하지 않은 상품입니다.',
       });
     }
+
+    return targetAuction;
+  }
+
+  async updateBid(bid: number, userId: string, productId: string) {
+    const user = await this.userRepository.findUserById(userId);
+
+    const targetAuction = await this.getAuctionByProductId(productId);
 
     if (targetAuction.bid >= bid) {
       throw new BadRequestException({
