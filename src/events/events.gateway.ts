@@ -84,7 +84,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `입찰가 : ${bid}, 유저 : ${userInfo.userId}, 상품 : ${this.productId}`,
     );
 
-    const updatedAuction = await this.auctionRepository.handleBid(
+    const updatedAuction = await this.auctionRepository.updateBid(
       bid,
       userInfo.userId,
       this.productId,
@@ -104,7 +104,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     nameSpace.emit('userList', {
       connectedUsers: Object.values(this.connectedUsers[this.productId]),
     });
-    this.server.emit('alert', `${deleteUser}님이 퇴장하셨습니다.`);
+    this.server.emit('alert', `${deleteUser.userId}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
 }
