@@ -63,11 +63,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   // 연결 됐을 때
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('chat')
   handleMessage(socket: Socket, payload: string) {
     const userInfo = this.connectedUsers[this.productId][socket.id];
     const sendTime = getTime();
-    this.server.emit('message', {
+    this.server.emit('chat', {
       message: payload,
       userInfo,
       sendTime,
@@ -99,12 +99,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     const { nsp: nameSpace } = socket;
-    const deleteUser = this.connectedUsers[this.productId][socket.id];
+    const { userId } = this.connectedUsers[this.productId][socket.id];
     delete this.connectedUsers[this.productId][socket.id];
     nameSpace.emit('userList', {
       connectedUsers: Object.values(this.connectedUsers[this.productId]),
     });
-    this.server.emit('alert', `${deleteUser.userId}님이 퇴장하셨습니다.`);
+    this.server.emit('alert', `${userId}님이 퇴장하셨습니다.`);
   }
   // 끊어졌을 때
 }

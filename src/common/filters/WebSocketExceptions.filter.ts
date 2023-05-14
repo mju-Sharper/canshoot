@@ -10,7 +10,7 @@ export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
       exception instanceof WsException
         ? exception.getError()
         : exception.getResponse();
-    const details = error instanceof Object ? { ...error } : { message: error };
+    const details = error instanceof Object ? { ...error } : { error };
     client.send(
       JSON.stringify({
         event: 'error',
