@@ -7,11 +7,12 @@ import { AuctionsController } from './auctions.controller';
 import { Auction } from './auctions.entity';
 import { AuctionRepository } from './auctions.repository';
 import { AuctionsService } from './auctions.service';
+import { AuctionsInfo } from './auctionsInfo.helpers';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Auction]), AuthModule],
   controllers: [AuctionsController],
-  providers: [AuctionRepository, AuctionsService],
-  exports: [AuctionRepository, AuctionsService],
+  providers: [AuctionRepository, AuctionsService, AuctionsInfo],
+  exports: [AuctionRepository, AuctionsService, AuctionsInfo],
 })
 export class AuctionsModule {}

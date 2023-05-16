@@ -31,6 +31,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   public productId: string;
 
+  /*   private auctionTime = 10;
+  private timer: NodeJS.Timer; */
+
   private readonly connectedUsers = {};
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -62,6 +65,21 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
   // 연결 됐을 때
+
+  /*   @SubscribeMessage('time')
+  startTime() {
+    if (!this.auctionTime) {
+      this.server.emit('alert', `경매가 종료되었습니다!`);
+      this.timer && clearInterval(this.timer);
+    }
+
+    this.timer = setInterval(() => {
+      this.server.emit('time', {
+        leftTime: this.auctionTime,
+      });
+      this.auctionTime -= 1;
+    }, 1000); 
+  } */
 
   @SubscribeMessage('chat')
   handleMessage(socket: Socket, payload: string) {

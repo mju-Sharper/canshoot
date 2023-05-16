@@ -1,14 +1,9 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
 import { AWS_MODULE_OPTIONS } from 'src/common/consts';
+import { AwsModuleOptions } from 'src/common/interfaces';
 
 import { S3Service } from './s3.service';
-
-export interface AwsModuleOptions {
-  region: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-}
 
 @Module({})
 export class AwsModule {

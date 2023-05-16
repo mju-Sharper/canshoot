@@ -1,6 +1,4 @@
-interface IData<T> {
-  [key: string]: T;
-}
+import { GenericObj } from '../interfaces';
 
 /**
  * @module ResponseDto
@@ -11,7 +9,7 @@ export class ResponseDto<T> {
    * @param  {string} message successive message
    * @param  {IData} returnData return data with message
    */
-  constructor(message: string, returnData?: IData<T>) {
+  constructor(message: string, returnData?: GenericObj<T>) {
     this.data = { message, ...returnData };
   }
 
