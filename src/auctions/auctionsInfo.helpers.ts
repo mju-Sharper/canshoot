@@ -7,23 +7,34 @@ export class AuctionsInfo {
   private auction: GenericObj<INameSpace>;
 
   isNameSpaceEmpty(nsp: string): boolean {
-    return nsp in this.auction;
+    return !(nsp in this.auction);
   }
 
-  initNameSpace(nsp: string): INameSpace {
-    this.auction[nsp] = {
-      time: 10,
-      userData: {},
-    };
-    return this.auction[nsp];
+  initAuction() {
+    this.auction = {};
+  }
+
+  initNameSpace(nsp: string): void {
+    if (this.isNameSpaceEmpty(nsp)) {
+      this.auction[nsp] = {
+        leftTime: 10,
+        userData: {},
+      };
+    }
   }
 
   addUser(nsp: string, userInfo: IUserInfo, socketId: string): INameSpace {
     this.auction[nsp].userData = {
       ...this.auction[nsp].userData,
-      [socketId]: userInfo,
+      [socketId]: {
+        ...userInfo,
+      },
     };
     return this.auction[nsp];
+  }
+
+  getUser(socketId: string, nsp: string) {
+    return this.auction[nsp].userData[socketId];
   }
 
   deleteUser(nsp: string, socketId: string): IUserInfo {
@@ -40,4 +51,6 @@ export class AuctionsInfo {
 
     return userList;
   }
+
+  // startTime(nsp: string) {}
 }

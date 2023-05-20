@@ -7,6 +7,7 @@ export interface IUserInfo {
 }
 
 export interface INameSpace {
-  time: number;
+  timer?: NodeJS.Timer;
+  leftTime: number;
   userData: GenericObj<IUserInfo>;
 }

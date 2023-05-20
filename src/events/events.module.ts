@@ -6,9 +6,11 @@ import { LoggerModule } from 'src/logger/logger.module';
 import { ProductsModule } from 'src/products/products.module';
 
 import { EventsGateway } from './events.gateway';
+import { EventsService } from './events.service';
 
 @Module({
   imports: [AuthModule, ProductsModule, LoggerModule, AuctionsModule],
-  providers: [EventsGateway],
+  providers: [EventsGateway, EventsService],
+  exports: [EventsGateway, EventsService],
 })
 export class EventsModule {}
