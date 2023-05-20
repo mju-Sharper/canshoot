@@ -1,4 +1,8 @@
-import { UseFilters } from '@nestjs/common';
+import {
+  BadRequestException,
+  UnauthorizedException,
+  UseFilters,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   SubscribeMessage,
@@ -17,6 +21,8 @@ import { UserRepository } from 'src/auth/user.repository';
 import { WebsocketExceptionsFilter } from 'src/common/filters';
 import { LoggerService } from 'src/logger/logger.service';
 import { getTime } from 'src/util';
+
+import { Actions } from '../common/consts';
 
 import { EventsService } from './events.service';
 
@@ -83,20 +89,37 @@ export class EventsGateway
   }
   // 연결 됐을 때
 
-  /*   @SubscribeMessage('time')
-  startTime() {
-    if (!this.auctionTime) {
-      this.server.emit('alert', `경매가 종료되었습니다!`);
-      this.timer && clearInterval(this.timer);
+  @SubscribeMessage('time')
+  handleTime(socket: Socket, action: Actions) {
+    const { socketId, nsp, nspName } =
+      this.eventsService.parseSocketInfo(socket);
+
+    const userInfo = this.auctionInfo.getUser(socketId, nspName);
+
+    if (!userInfo.isAdmin) {
+      throw new UnauthorizedException({
+        error: '권한이 없습니다.',
+      });
     }
 
-    this.timer = setInterval(() => {
-      this.server.emit('time', {
-        leftTime: this.auctionTime,
-      });
-      this.auctionTime -= 1;
-    }, 1000); 
-  } */
+    switch (action) {
+      case Actions.RESET:
+        this.auctionInfo.resetTime(nspName);
+        nsp.emit('alert', '경매 시간이 초기화됐습니다.');
+        break;
+      case Actions.START:
+        this.auctionInfo.startTime(nspName, nsp);
+        nsp.emit('alert', '경매가 시작되었습니다.');
+        break;
+      case Actions.STOP:
+        this.auctionInfo.stopTime(nspName);
+        break;
+      default:
+        throw new BadRequestException({
+          error: '유효하지 않은 명령입니다.',
+        });
+    }
+  }
 
   @SubscribeMessage('chat')
   handleMessage(socket: Socket, payload: string) {
@@ -115,6 +138,14 @@ export class EventsGateway
   async handleBid(socket: Socket, payload) {
     const { nsp, nspName, socketId, productId } =
       this.eventsService.parseSocketInfo(socket);
+
+    const isBid = this.auctionInfo.isBid(nspName);
+    if (isBid) {
+      throw new BadRequestException({
+        error: '종료된 경매입니다.',
+      });
+    }
+
     const { bid } = payload;
     const userInfo = this.auctionInfo.getUser(socketId, nspName);
     const sendTime = getTime();

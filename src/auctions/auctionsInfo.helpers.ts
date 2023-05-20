@@ -1,56 +1,87 @@
 import { Injectable } from '@nestjs/common';
 
+import { Namespace } from 'socket.io';
 import { GenericObj, IUserInfo, INameSpace } from 'src/common/interfaces';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class AuctionsInfo {
+  constructor(private loggerService: LoggerService) {}
+
   private auction: GenericObj<INameSpace>;
 
-  isNameSpaceEmpty(nsp: string): boolean {
-    return !(nsp in this.auction);
+  isNameSpaceEmpty(nspName: string): boolean {
+    return !(nspName in Object.keys(this.auction));
   }
 
   initAuction() {
     this.auction = {};
   }
 
-  initNameSpace(nsp: string): void {
-    if (this.isNameSpaceEmpty(nsp)) {
-      this.auction[nsp] = {
+  initNameSpace(nspName: string): void {
+    if (this.isNameSpaceEmpty(nspName)) {
+      this.auction[nspName] = {
         leftTime: 10,
         userData: {},
       };
     }
   }
 
-  addUser(nsp: string, userInfo: IUserInfo, socketId: string): INameSpace {
-    this.auction[nsp].userData = {
-      ...this.auction[nsp].userData,
+  addUser(nspName: string, userInfo: IUserInfo, socketId: string): INameSpace {
+    this.auction[nspName].userData = {
+      ...this.auction[nspName].userData,
       [socketId]: {
         ...userInfo,
       },
     };
-    return this.auction[nsp];
+    return this.auction[nspName];
   }
 
-  getUser(socketId: string, nsp: string) {
-    return this.auction[nsp].userData[socketId];
+  getUser(socketId: string, nspName: string) {
+    return this.auction[nspName].userData[socketId];
   }
 
-  deleteUser(nsp: string, socketId: string): IUserInfo {
-    const deleteUserInfo = this.auction[nsp].userData[socketId];
-    delete this.auction[nsp].userData[socketId];
+  deleteUser(nspName: string, socketId: string): IUserInfo {
+    const deleteUserInfo = this.auction[nspName].userData[socketId];
+    delete this.auction[nspName].userData[socketId];
 
     return deleteUserInfo;
   }
 
-  getUserList(nsp: string): string[] {
-    const userList = Object.keys(this.auction[nsp].userData).map(
-      (socketId) => this.auction[nsp].userData[socketId].userId,
+  getUserList(nspName: string): string[] {
+    const userList = Object.keys(this.auction[nspName].userData).map(
+      (socketId) => this.auction[nspName].userData[socketId].userId,
     );
 
     return userList;
   }
 
-  // startTime(nsp: string) {}
+  startTime(nspName: string, nsp: Namespace) {
+    this.auction[nspName].leftTime = 10;
+    this.loggerService.log(`"${nspName}"방 경매가 시작되었습니다.`);
+    const timer = setInterval(() => {
+      if (this.auction[nspName].leftTime === 0) {
+        clearInterval(timer);
+        nsp.emit('alert', '경매가 종료되었습니다.');
+        this.loggerService.log(`"${nspName}"방 경매가 종료되었습니다.`);
+      } else {
+        nsp.emit('time', {
+          leftTime: this.auction[nspName].leftTime,
+        });
+        this.auction[nspName].leftTime -= 1;
+      }
+    }, 1000);
+  }
+
+  stopTime(nspName: string) {
+    this.auction[nspName].leftTime = 0;
+  }
+
+  resetTime(nspName: string) {
+    this.auction[nspName].leftTime = 10;
+  }
+
+  isBid(nspName: string) {
+    return this.auction[nspName].leftTime === 0;
+  }
 }
