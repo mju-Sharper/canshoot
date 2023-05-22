@@ -129,28 +129,21 @@ export class ProductRepository {
     userId: string,
   ) {
     const { order, skip, take, category, search } = pageOptionsDto;
+
     const productsQueryBuilder = this.productRepository
       .createQueryBuilder('Products')
       .select(ProductReturnData.map((data) => `Products.${data}`))
       .leftJoin('Products.seller', 'user')
-      .where('user.id=:userId', { userId });
-
-    if (order) {
-      productsQueryBuilder.orderBy('Products.startingBid', order);
-    }
-
-    productsQueryBuilder.skip(skip).take(take);
-
-    if (category) {
-      productsQueryBuilder.andWhere('Products.category= :category', {
+      .where('user.id=:userId', { userId })
+      .skip(skip)
+      .take(take)
+      .andWhere('Products.category in (:category)', {
         category,
-      });
-    }
-    if (search) {
-      productsQueryBuilder.andWhere('Products.name like :search', {
+      })
+      .andWhere('Products.name like :search', {
         search: `%${search}%`,
-      });
-    }
+      })
+      .orderBy('Products.startingBid', order);
 
     const itemCount = await productsQueryBuilder.getCount();
     const { entities } = await productsQueryBuilder.getRawAndEntities();
