@@ -48,9 +48,9 @@ export class AuctionsInfo {
     return deleteUserInfo;
   }
 
-  getUserList(nspName: string): string[] {
+  getUserList(nspName: string): IUserInfo[] {
     const userList = Object.keys(this.auction[nspName].userData).map(
-      (socketId) => this.auction[nspName].userData[socketId].userId,
+      (socketId) => this.auction[nspName].userData[socketId],
     );
 
     return userList;
