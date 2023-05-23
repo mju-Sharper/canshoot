@@ -1,15 +1,4 @@
-import { PageOptionsDto } from '.';
-
-interface IRelated {
-  prev_uri: string | null;
-  next_uri: string | null;
-}
-
-interface IPageLinkDto {
-  url: string;
-  itemCount: number;
-  pageOptionsDto: PageOptionsDto;
-}
+import { IRelated, IPageLinkDto } from '../interfaces';
 
 export class PageLinkDto {
   self: string;

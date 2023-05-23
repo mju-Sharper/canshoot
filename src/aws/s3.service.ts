@@ -3,9 +3,8 @@ import { Injectable, Inject, HttpException } from '@nestjs/common';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Express } from 'express';
 import { AWS_MODULE_OPTIONS } from 'src/common/consts';
+import { AwsModuleOptions } from 'src/common/interfaces';
 import { v4 } from 'uuid';
-
-import { AwsModuleOptions } from './aws.module';
 
 @Injectable()
 export class S3Service {

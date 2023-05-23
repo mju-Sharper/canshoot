@@ -1,9 +1,4 @@
-import { PageOptionsDto } from '.';
-
-interface IpageMetaDto {
-  pageOptionsDto: PageOptionsDto;
-  itemCount: number;
-}
+import { IpageMetaDto } from '../interfaces';
 
 export class PageMetaDto {
   page: number;
