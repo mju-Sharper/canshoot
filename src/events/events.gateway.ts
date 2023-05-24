@@ -168,18 +168,22 @@ export class EventsGateway
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
-    const { nsp, nspName } = this.eventsService.parseSocketInfo(socket);
+    const { nsp, nspName, socketId } =
+      this.eventsService.parseSocketInfo(socket);
 
-    const { userId } = this.auctionInfo.deleteUser(socket.nsp.name, socket.id);
+    try {
+      const { userId } = this.auctionInfo.deleteUser(nspName, socketId);
+      const connectedUsers = this.auctionInfo.getUserList(nspName);
 
-    const connectedUsers = this.auctionInfo.getUserList(nspName);
+      nsp.emit('userList', {
+        connectedUsers,
+      });
+      nsp.emit('alert', `${userId}님이 퇴장하셨습니다.`);
 
-    nsp.emit('userList', {
-      connectedUsers,
-    });
-    nsp.emit('alert', `${userId}님이 퇴장하셨습니다.`);
-
-    this.loggerService.log(`${userId}님 퇴장`);
+      this.loggerService.log(`${userId}님 퇴장`);
+    } catch (e) {
+      this.loggerService.error('유저 퇴장시 오류 발생\n', e);
+    }
   }
   // 끊어졌을 때
 }

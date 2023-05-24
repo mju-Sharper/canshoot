@@ -42,6 +42,8 @@ export class AuctionsInfo {
   }
 
   deleteUser(nspName: string, socketId: string): IUserInfo {
+    this.loggerService.log(`nspName : ${nspName}, socketId:${socketId}`);
+
     const deleteUserInfo = this.auction[nspName].userData[socketId];
     delete this.auction[nspName].userData[socketId];
 
