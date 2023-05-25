@@ -52,6 +52,18 @@ export class UserRepository {
     return user;
   }
 
+  async findUser(id: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({
+      id,
+    });
+
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 아이디입니다.');
+    }
+
+    return user;
+  }
+
   async isAdmin(productId: string, userId: string): Promise<boolean> {
     const admin = await this.userRepository
       .createQueryBuilder('User')

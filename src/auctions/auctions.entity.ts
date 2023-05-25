@@ -22,8 +22,14 @@ export class Auction extends AbstractEntity {
   @JoinColumn()
   product: Product;
 
+  @Column({
+    nullable: true,
+  })
+  bidderId: string;
+
   @ManyToOne(() => User, (user) => user.auctions, {
     nullable: true,
   })
+  @JoinColumn({ name: 'bidderId', referencedColumnName: 'id' })
   bidder: User;
 }
