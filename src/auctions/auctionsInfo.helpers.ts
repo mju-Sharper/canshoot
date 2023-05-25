@@ -4,9 +4,14 @@ import { Namespace } from 'socket.io';
 import { GenericObj, IUserInfo, INameSpace } from 'src/common/interfaces';
 import { LoggerService } from 'src/logger/logger.service';
 
+import { AuctionRepository } from './auctions.repository';
+
 @Injectable()
 export class AuctionsInfo {
-  constructor(private loggerService: LoggerService) {}
+  constructor(
+    private loggerService: LoggerService,
+    private auctionRepository: AuctionRepository,
+  ) {}
 
   private auction: GenericObj<INameSpace>;
 
@@ -21,7 +26,7 @@ export class AuctionsInfo {
   initNameSpace(nspName: string): void {
     if (this.isNameSpaceEmpty(nspName)) {
       this.auction[nspName] = {
-        leftTime: 10,
+        leftTime: 60,
         userData: {},
       };
     }
@@ -59,7 +64,7 @@ export class AuctionsInfo {
   }
 
   startTime(nspName: string, nsp: Namespace) {
-    this.auction[nspName].leftTime = 10;
+    this.auction[nspName].leftTime = 60;
     this.loggerService.log(`"${nspName}"방 경매가 시작되었습니다.`);
     const timer = setInterval(() => {
       if (this.auction[nspName].leftTime === 0) {
