@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Namespace } from 'socket.io';
+import { UserRepository } from 'src/auth/user.repository';
 import { GenericObj, IUserInfo, INameSpace } from 'src/common/interfaces';
 import { LoggerService } from 'src/logger/logger.service';
 
@@ -11,6 +12,7 @@ export class AuctionsInfo {
   constructor(
     private loggerService: LoggerService,
     private auctionRepository: AuctionRepository,
+    private userRepository: UserRepository,
   ) {}
 
   private auction: GenericObj<INameSpace>;
@@ -63,14 +65,23 @@ export class AuctionsInfo {
     return userList;
   }
 
-  startTime(nspName: string, nsp: Namespace) {
+  startTime(nspName: string, nsp: Namespace, productId: string) {
     this.auction[nspName].leftTime = 60;
     this.loggerService.log(`"${nspName}"방 경매가 시작되었습니다.`);
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       if (this.auction[nspName].leftTime === 0) {
         clearInterval(timer);
         nsp.emit('alert', '경매가 종료되었습니다.');
-        this.loggerService.log(`"${nspName}"방 경매가 종료되었습니다.`);
+
+        const { bid, bidderId } =
+          await this.auctionRepository.getAuctionByProductId(productId);
+
+        const { userId } = await this.userRepository.findUser(bidderId);
+        nsp.emit('result', `${userId}님 ${bid}원 낙찰`);
+
+        this.loggerService.log(
+          `"${nspName}"방 경매가 종료되었습니다. 낙찰 가격은 ${bid}, 낙찰된 사람은 ${userId}입니다.`,
+        );
       } else {
         nsp.emit('time', {
           leftTime: this.auction[nspName].leftTime,
@@ -85,7 +96,7 @@ export class AuctionsInfo {
   }
 
   resetTime(nspName: string) {
-    this.auction[nspName].leftTime = 10;
+    this.auction[nspName].leftTime = 60;
   }
 
   isBid(nspName: string) {

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UserRepository } from 'src/auth/user.repository';
+import { LoggerService } from 'src/logger/logger.service';
 import { Product } from 'src/products/entities';
 import { Repository } from 'typeorm';
 
@@ -13,6 +14,7 @@ export class AuctionRepository {
     @InjectRepository(Auction)
     private readonly auctionRepository: Repository<Auction>,
     private readonly userRepository: UserRepository,
+    private loggerService: LoggerService,
   ) {}
 
   async createAuction(product: Product, bid: number): Promise<Auction> {
@@ -56,13 +58,16 @@ export class AuctionRepository {
       id: targetAuction.id,
       bid,
       bidder: user,
+      bidderId: userId,
     };
 
-    this.auctionRepository.save(updatedAuction);
+    this.loggerService.log(`경매가 업데이트, 유저 : ${userId} 경매가 : ${bid}`);
+
+    await this.auctionRepository.save(updatedAuction);
 
     return {
       bid,
-      bidder: user.userId,
+      bidder: userId,
     };
   }
 }

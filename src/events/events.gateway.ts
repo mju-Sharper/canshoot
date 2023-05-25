@@ -91,7 +91,7 @@ export class EventsGateway
 
   @SubscribeMessage('time')
   handleTime(socket: Socket, action: Actions) {
-    const { socketId, nsp, nspName } =
+    const { socketId, nsp, nspName, productId } =
       this.eventsService.parseSocketInfo(socket);
 
     const userInfo = this.auctionInfo.getUser(socketId, nspName);
@@ -108,7 +108,7 @@ export class EventsGateway
         nsp.emit('alert', '경매 시간이 초기화됐습니다.');
         break;
       case Actions.START:
-        this.auctionInfo.startTime(nspName, nsp);
+        this.auctionInfo.startTime(nspName, nsp, productId);
         nsp.emit('alert', '경매가 시작되었습니다.');
         break;
       case Actions.STOP:
