@@ -18,7 +18,7 @@ export class AuctionsInfo {
   private auction: GenericObj<INameSpace>;
 
   isNameSpaceEmpty(nspName: string): boolean {
-    return !(nspName in Object.keys(this.auction));
+    return !(nspName in this.auction);
   }
 
   initAuction() {
