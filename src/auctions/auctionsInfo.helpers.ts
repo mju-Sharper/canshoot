@@ -82,12 +82,11 @@ export class AuctionsInfo {
         this.loggerService.log(
           `"${nspName}"방 경매가 종료되었습니다. 낙찰 가격은 ${bid}, 낙찰된 사람은 ${userId}입니다.`,
         );
-      } else {
-        nsp.emit('time', {
-          leftTime: this.auction[nspName].leftTime,
-        });
-        this.auction[nspName].leftTime -= 1;
       }
+      nsp.emit('time', {
+        leftTime: this.auction[nspName].leftTime,
+      });
+      this.auction[nspName].leftTime -= 1;
     }, 1000);
   }
 
