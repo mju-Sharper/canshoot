@@ -38,6 +38,9 @@ export class Product extends AbstractEntity {
   @JoinColumn({ name: 'sellerId', referencedColumnName: 'id' })
   seller: User;
 
-  @OneToOne(() => Auction, (auction) => auction.product)
+  @OneToOne(() => Auction, (auction) => auction.product, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   auction: Auction;
 }

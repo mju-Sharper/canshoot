@@ -18,7 +18,10 @@ export class Auction extends AbstractEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => Product, (product) => product.auction)
+  @OneToOne(() => Product, (product) => product.auction, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn()
   product: Product;
 
