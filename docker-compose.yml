@@ -38,12 +38,18 @@ services:
       - '443:443'
     volumes:
       - ./src/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt:/etc/letsencrypt
-      # - ./data/certbot/conf:/etc/letsencrypt:ro
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./data/nginx/conf.d:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     depends_on:
       - nest
     command: "/bin/sh -c 'nginx; trap exit TERM; while :; do sleep 6h  & wait $${!}; nginx -s reload; done;'"
 
+  certbot:
+    image: certbot/certbot:v0.36.0
+    restart: always
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
 volumes:
   mysql-data:
