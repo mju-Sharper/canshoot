@@ -64,7 +64,7 @@ esac
 
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
-certbot certonly -d canshoot.p-e.kr --manual --preferred-challenges dns
+
 
 docker-compose run --rm --entrypoint "\
   certbot certonly -d canshoot.p-e.kr --manual --preferred-challenges dns \
