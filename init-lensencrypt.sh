@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=canshoot.p-e.kr // 각자 등록한 도메인
+domains=(canshoot.p-e.kr) // 각자 등록한 도메인
 rsa_key_size=4096
 data_path="./data/certbot"
 email="pjm2207@naver.com" # Adding a valid address is strongly recommended
@@ -67,7 +67,7 @@ if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
 
 docker-compose run --rm --entrypoint "\
-  certbot certonly -d canshoot.p-e.kr --manual --preferred-challenges dns \
+  certbot certonly -d canshoot.p-e.kr --manual --preferred-challenges=dns \
   certbot certonly -a webroot -v --debug-challenges -w /var/www/certbot \
     $staging_arg \
     $email_arg \
